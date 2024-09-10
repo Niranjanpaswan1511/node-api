@@ -1,20 +1,24 @@
 const mysql = require('mysql2');
 
-// Create a connection to the database
-const connection = mysql.createConnection({
-  host: '193.203.184.158', // Replace with your host, e.g., '127.0.0.1'
-  user: 'u560667907_Niranjanuser',      // Replace with your MySQL username
-  password: 'Niranjan151199@',      // Replace with your MySQL password
-  database: 'u560667907_dbniranjan' // Replace with your database name
+// Create a connection pool
+const pool = mysql.createPool({
+  host:'193.203.184.158', 
+  user:'u560667907_Niranjanuser',      
+  password: 'Niranjan151199@',
+  database:'u560667907_dbniranjan' ,
+  waitForConnections: true,
+  connectionLimit: 10,
+  queueLimit: 0
 });
 
-// Connect to the database
-connection.connect((err) => {
+// Test the connection
+pool.getConnection((err, connection) => {
   if (err) {
-    console.error('Error connecting to the database:', err.stack);
-    return;
+    console.error('Error connecting to the database:', err);
+  } else {
+    console.log('Database connected successfully!');
+    connection.release(); // Release the connection back to the pool
   }
-  console.log('Connected to the database.');
 });
 
-module.exports = connection;
+module.exports = pool.promise();

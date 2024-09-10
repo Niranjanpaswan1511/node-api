@@ -4,28 +4,28 @@ const port = 3000;
 const db = require('./db'); // Import the database connection
 
 // Route to get users
-app.get('/users', (req, res) => {
-  db.query('SELECT * FROM users', (error, results) => {
-    if (error) {
-      console.error('Error fetching users:', error);
-      return res.status(500).send('Internal Server Error');
-    }
+app.get('/users', async (req, res) => {
+  try {
+    const [results] = await db.query('SELECT * FROM users');
     res.json(results);
-  });
+  } catch (error) {
+    console.error('Error fetching users:', error);
+    res.status(500).send('Internal Server Error');
+  }
 });
 
 // Route to add a new user
-app.post('/users', express.json(), (req, res) => {
+app.post('/users', express.json(), async (req, res) => {
   const { name, email } = req.body;
   const sql = 'INSERT INTO users (name, email) VALUES (?, ?)';
   
-  db.query(sql, [name, email], (error, results) => {
-    if (error) {
-      console.error('Error inserting user:', error);
-      return res.status(500).send('Internal Server Error');
-    }
+  try {
+    const [results] = await db.query(sql, [name, email]);
     res.status(201).json({ id: results.insertId, name, email });
-  });
+  } catch (error) {
+    console.error('Error inserting user:', error);
+    res.status(500).send('Internal Server Error');
+  }
 });
 
 // Start the server
