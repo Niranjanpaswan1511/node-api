@@ -125,7 +125,7 @@ app.post('/users', async (req, res) => {
 
 app.get('/Contactlist',async(req,res)=>{
   try {
-    const[rs]=await db.query('Select * from Tbl_Contact');
+    const[rs]=await db.query('Select * from Tbl_Contact order by id desc');
     res.json(rs);
   } catch (error) {
     res.status(500).send('Internal Server Error');
